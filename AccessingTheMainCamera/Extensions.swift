@@ -7,12 +7,19 @@ An extension to convert a `CVPixelBuffer` to a SwiftUI `Image`.
 
 import SwiftUI
 
-extension CVPixelBuffer {
+extension CVReadOnlyPixelBuffer {
     var image: Image? {
-        let ciImage = CIImage(cvPixelBuffer: self)
-        let context = CIContext(options: nil)
+        let cgImage = self.withUnsafeBuffer { cvPixelBuffer -> CGImage? in
+            let ciImage = CIImage(cvPixelBuffer: cvPixelBuffer)
+            let context = CIContext(options: nil)
+            
+            guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else {
+                return nil
+            }
+            return cgImage
+        }
         
-        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else {
+        guard let cgImage else {
             return nil
         }
 

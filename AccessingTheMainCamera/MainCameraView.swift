@@ -11,7 +11,7 @@ import SwiftUI
 
 struct MainCameraView: View {
     @State private var arkitSession = ARKitSession()
-    @State private var pixelBuffer: CVPixelBuffer?
+    @State private var pixelBuffer: CVReadOnlyPixelBuffer?
     
     let emptyImage = Image(systemName: "camera")
 
@@ -50,7 +50,7 @@ struct MainCameraView: View {
                 if let sample = cameraFrame.sample(for: .left) {
                     
                     // Update the `pixelBuffer` to render the frame's image.
-                    pixelBuffer = sample.pixelBuffer
+                    pixelBuffer = sample.buffer as CVReadOnlyPixelBuffer
 
                 }
 
